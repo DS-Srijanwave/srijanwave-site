@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin - SRIJANWAVE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-6">
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
+  <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+  <div id="login-area">
+    <input id="pwd" type="password" placeholder="Password" class="w-full p-3 border rounded mb-3">
+    <button id="loginBtn" class="w-full bg-blue-600 text-white p-3 rounded">Login</button>
+    <p id="login-msg" class="text-sm text-red-500 mt-2"></p>
+  </div>
+
+  <div id="editor-area" style="display:none;">
+    <h3 class="font-bold mt-4">Edit Content</h3>
+    <label class="block mt-2">Site Title</label>
+    <input id="siteTitle" class="w-full p-2 border rounded">
+    <label class="block mt-2">Hero Heading</label>
+    <input id="heroHeading" class="w-full p-2 border rounded">
+    <label class="block mt-2">Hero Subheading</label>
+    <input id="heroSub" class="w-full p-2 border rounded">
+    <label class="block mt-2">Primary Color</label>
+    <input id="primaryColor" class="w-full p-2 border rounded">
+    <label class="block mt-2">Footer Text</label>
+    <input id="footerText" class="w-full p-2 border rounded">
+
+    <div class="mt-4 flex gap-2">
+      <button id="downloadBtn" class="bg-green-600 text-white p-2 rounded">Download config.json</button>
+      <button id="applyBtn" class="bg-blue-600 text-white p-2 rounded">Apply (preview only)</button>
+      <button id="logoutBtn" class="bg-gray-400 text-white p-2 rounded">Logout</button>
+    </div>
+
+    <p class="text-sm text-gray-500 mt-3">Note: This admin edits the config in-browser and allows you to download the updated <code>config.json</code>. To make changes live, upload the downloaded config.json to your GitHub Pages repo (replace existing).</p>
+  </div>
+</div>
+
+<script>
+// Embedded password hash (SHA-256)
+const PASS_HASH = "c2affbb98294e2082d586b3d6683d3a2f6ee982f7c53de5cd3e3cec566533699";
+
+// SHA-256 helper
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+const loginBtn = document.getElementById('loginBtn');
+const loginMsg = document.getElementById('login-msg');
+const pwdInput = document.getElementById('pwd');
+
+loginBtn.addEventListener('click', async () => {
+  const val = pwdInput.value || '';
+  const h = await sha256(val);
+  if(h === PASS_HASH) {
+    document.getElementById('login-area').style.display = 'none';
+    document.getElementById('editor-area').style.display = 'block';
+    loadConfigToForm();
+  } else {
+    loginMsg.innerText = 'Incorrect password';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  document.getElementById('login-area').style.display = 'block';
+  document.getElementById('editor-area').style.display = 'none';
+  pwdInput.value = '';
+});
+
+// Load config.json into form
+async function loadConfigToForm(){
+  try{
+    const res = await fetch('config.json?ts='+Date.now());
+    const cfg = await res.json();
+    document.getElementById('siteTitle').value = cfg.siteTitle || '';
+    document.getElementById('heroHeading').value = cfg.hero.heading || '';
+    document.getElementById('heroSub').value = cfg.hero.subheading || '';
+    document.getElementById('primaryColor').value = cfg.primaryColor || '#3b82f6';
+    document.getElementById('footerText').value = cfg.footerText || '';
+    window._currentConfig = cfg;
+  }catch(e){
+    console.error(e);
+    alert('Failed to load config.json. Make sure config.json is present.');
+  }
+}
+
+// Download updated config.json
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const cfg = window._currentConfig || {};
+  cfg.siteTitle = document.getElementById('siteTitle').value;
+  cfg.hero = cfg.hero || {};
+  cfg.hero.heading = document.getElementById('heroHeading').value;
+  cfg.hero.subheading = document.getElementById('heroSub').value;
+  cfg.primaryColor = document.getElementById('primaryColor').value;
+  cfg.footerText = document.getElementById('footerText').value;
+  const blob = new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'config.json';
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+// Apply preview (update index preview in same browser by opening index.html)
+document.getElementById('applyBtn').addEventListener('click', () => {
+  const cfg = window._currentConfig || {};
+  cfg.siteTitle = document.getElementById('siteTitle').value;
+  cfg.hero = cfg.hero || {};
+  cfg.hero.heading = document.getElementById('heroHeading').value;
+  cfg.hero.subheading = document.getElementById('heroSub').value;
+  cfg.primaryColor = document.getElementById('primaryColor').value;
+  cfg.footerText = document.getElementById('footerText').value;
+  sessionStorage.setItem('srijan_config_preview', JSON.stringify(cfg));
+  window.open('index.html', '_blank');
+});
+</script>
+</body>
+</html>

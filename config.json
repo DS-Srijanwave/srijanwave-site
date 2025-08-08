@@ -1,0 +1,63 @@
+{
+  "siteTitle": "SRIJANWAVE - Digital Marketing & Advertising Agency",
+  "logo": "images/logo.png",
+  "hero": {
+    "heading": "We Design. We Market. We Grow Your Brand.",
+    "subheading": "Transform your digital presence with our cutting-edge marketing solutions tailored to your brand's unique needs",
+    "ctaText": "Book 1:1 Call",
+    "ctaLink": "#book"
+  },
+  "primaryColor": "#3b82f6",
+  "about": {
+    "heading": "About SRIJANWAVE",
+    "text": "Founded by Dhanajy Sharma, SRIJANWAVE delivers exceptional digital marketing solutions.",
+    "image": "images/about.jpg"
+  },
+  "services": [
+    {
+      "title": "Graphic Designing",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    },
+    {
+      "title": "Video Editing",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    },
+    {
+      "title": "Website Designing",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    },
+    {
+      "title": "Dropshipping Coaching",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    },
+    {
+      "title": "Social Media Management",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    },
+    {
+      "title": "Branding & Marketing",
+      "description": "Describe this service.",
+      "icon": "fa-circle"
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "Sarah Johnson",
+      "role": "Founder & CEO, InnoTech",
+      "text": "SRIJANWAVE transformed our digital presence completely.",
+      "image": "images/testi1.jpg"
+    }
+  ],
+  "social": {
+    "facebook": "#",
+    "twitter": "#",
+    "instagram": "#",
+    "linkedin": "#"
+  },
+  "footerText": "\u00a9 2025 SRIJANWAVE. All rights reserved."
+}

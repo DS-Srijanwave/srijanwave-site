@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="page-title">SRIJANWAVE - Digital Marketing & Advertising Agency</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+:root { --primary: #3b82f6; }
+body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
+.container { max-width:1100px; margin:0 auto; padding:20px; }
+a.button { background:var(--primary); color:white; padding:10px 18px; border-radius:999px; display:inline-block; }
+.service { background:white; padding:18px; border-radius:12px; box-shadow:0 6px 18px rgba(2,6,23,0.06); }
+</style>
+</head>
+<body>
+<nav class="container flex items-center justify-between">
+  <div class="flex items-center gap-4">
+    <img id="logo" src="" alt="logo" class="h-12">
+    <h1 id="brand" class="text-xl font-bold"></h1>
+  </div>
+  <div>
+    <a href="admin.html" class="text-sm">Admin</a>
+  </div>
+</nav>
+
+<header class="container mt-8 text-center">
+  <h2 id="hero-heading" class="text-4xl font-bold"></h2>
+  <p id="hero-sub" class="mt-4 text-lg text-gray-600"></p>
+  <div class="mt-6">
+    <a id="hero-cta" class="button" href="#book">CTA</a>
+  </div>
+</header>
+
+<section class="container mt-12">
+  <h3 class="text-2xl font-bold mb-4">Services</h3>
+  <div id="services" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+</section>
+
+<section class="container mt-12">
+  <h3 class="text-2xl font-bold mb-4">Testimonials</h3>
+  <div id="testimonials"></div>
+</section>
+
+<footer class="container mt-12 text-center text-gray-600">
+  <p id="footer-text"></p>
+  <div id="social" class="mt-3"></div>
+</footer>
+
+<script src="index.js"></script>
+<script>
+// Load config.json and render content (fallback if no preview)
+async function loadConfig(){
+  try {
+    const res = await fetch('config.json?ts='+Date.now());
+    const cfg = await res.json();
+    document.title = cfg.siteTitle || document.title;
+    document.getElementById('page-title').innerText = cfg.siteTitle || '';
+    document.getElementById('brand').innerText = cfg.siteTitle || '';
+    document.getElementById('logo').src = cfg.logo || '';
+    document.getElementById('hero-heading').innerText = cfg.hero.heading || '';
+    document.getElementById('hero-sub').innerText = cfg.hero.subheading || '';
+    const cta = document.getElementById('hero-cta');
+    cta.innerText = cfg.hero.ctaText || 'Book';
+    cta.href = cfg.hero.ctaLink || '#book';
+    // services
+    const swrap = document.getElementById('services');
+    swrap.innerHTML = '';
+    (cfg.services||[]).forEach(function(s){
+      var div = document.createElement('div');
+      div.className = 'service';
+      div.innerHTML = '<h4 class="font-bold text-lg">' + (s.title||'') + '</h4><p class="text-gray-600 mt-2">' + (s.description||'') + '</p>';
+      swrap.appendChild(div);
+    });
+    // testimonials
+    const twrap = document.getElementById('testimonials');
+    twrap.innerHTML = '';
+    (cfg.testimonials||[]).forEach(function(t){
+      var d = document.createElement('div');
+      d.className='bg-white p-4 rounded-lg mb-3';
+      d.innerHTML = '<p class="italic">"' + (t.text||'') + '"</p><p class="mt-2 font-semibold">' + (t.name||'') + ' - <span class="text-gray-500">' + (t.role||'') + '</span></p>';
+      twrap.appendChild(d);
+    });
+    // footer & social
+    document.getElementById('footer-text').innerText = cfg.footerText || '';
+    var soc = document.getElementById('social');
+    soc.innerHTML = '';
+    for(var k in (cfg.social||{})){ 
+      var a = document.createElement('a');
+      a.href = cfg.social[k] || '#';
+      a.className = 'inline-block mx-2 text-gray-600';
+      a.innerText = k;
+      soc.appendChild(a);
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+loadConfig();
+</script>
+</body>
+</html>
